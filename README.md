@@ -1,0 +1,2 @@
+# Fate
+基于Netty的高性能MySQL分库分表中间件
