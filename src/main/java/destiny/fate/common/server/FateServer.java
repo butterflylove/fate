@@ -1,5 +1,11 @@
 package destiny.fate.common.server;
 
+import destiny.fate.common.config.ServerConfig;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +22,25 @@ public class FateServer extends Thread {
     }
 
     public static void main(String[] args) {
+
+    }
+
+    private void startServer() {
+        // acceptor
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
+        // worker
+        EventLoopGroup workerGroup = new NioEventLoopGroup();
+
+        try {
+            ServerBootstrap bootstrap = new ServerBootstrap();
+
+            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
+
+            ChannelFuture future = bootstrap.bind(ServerConfig.SERVER_PORT).sync();
+            future.channel().closeFuture().sync();
+        } catch (InterruptedException e) {
+            logger.error("端口{} 监听失败", ServerConfig.SERVER_PORT, e);
+        }
 
     }
 }
