@@ -1,8 +1,10 @@
 package destiny.fate.common.server;
 
 import destiny.fate.common.config.ServerConfig;
+import destiny.fate.common.net.handler.factory.FrontHandlerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -34,7 +36,9 @@ public class FateServer extends Thread {
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
 
-            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
+            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                .option(ChannelOption.SO_BACKLOG, 1024)
+                .childHandler(new FrontHandlerInitializer());
 
             ChannelFuture future = bootstrap.bind(ServerConfig.SERVER_PORT).sync();
             future.channel().closeFuture().sync();
