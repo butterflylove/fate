@@ -1,6 +1,8 @@
 package destiny.fate.common.net.handler.factory;
 
+import destiny.fate.common.net.decoder.MySqlPacketDecoder;
 import destiny.fate.common.net.handler.backend.pool.MySqlDataSource;
+import destiny.fate.common.net.handler.frontend.FrontendAuthenticator;
 import destiny.fate.common.net.handler.frontend.FrontendCollectHandler;
 import destiny.fate.common.net.handler.frontend.FrontendConnection;
 import io.netty.channel.ChannelInitializer;
@@ -22,7 +24,10 @@ public class FrontHandlerInitializer extends ChannelInitializer<SocketChannel> {
     protected void initChannel(SocketChannel ch) throws Exception {
         FrontendConnection source = factory.getConnection();
         FrontendCollectHandler collectHandler = new FrontendCollectHandler(source);
+        FrontendAuthenticator authenticator = new FrontendAuthenticator(source);
 
+        ch.pipeline().addLast(new MySqlPacketDecoder());
         ch.pipeline().addLast(collectHandler);
+        ch.pipeline().addLast(authenticator);
     }
 }

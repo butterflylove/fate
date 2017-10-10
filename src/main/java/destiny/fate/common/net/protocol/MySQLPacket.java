@@ -1,12 +1,15 @@
 package destiny.fate.common.net.protocol;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+
 import java.nio.ByteBuffer;
 
 /**
  * @author zhangtianlong
  */
 public abstract class MySQLPacket {
-
     /**
      * none, this is an internal thread state
      */
@@ -157,20 +160,29 @@ public abstract class MySQLPacket {
      */
     public static final byte COM_HEARTBEAT = 64;
 
+    /**
+     * MORE RESULTS
+     */
+    public static final int SERVER_MORE_RESULTS_EXISTS=8;
+
     public int packetLength;
-    public byte packetId;
+    public byte packetId = 1;
 
     /**
      * 把数据包写到buffer中，如果buffer满了就把buffer通过前端连接写出。
      */
-    public ByteBuffer write(ByteBuffer buffer) {
+    public ByteBuffer write(ByteBuffer buffer, Channel c) {
         throw new UnsupportedOperationException();
     }
 
     /**
      * 把数据包通过后端连接写出，一般使用buffer机制来提高写的吞吐量。
      */
-    public void write() {
+    public void write(ChannelHandlerContext ctx) {
+        throw new UnsupportedOperationException();
+    }
+
+    public ByteBuf writeBuf(ByteBuf buffer, ChannelHandlerContext ctx) {
         throw new UnsupportedOperationException();
     }
 

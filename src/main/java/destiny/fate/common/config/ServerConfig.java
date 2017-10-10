@@ -11,4 +11,6 @@ public interface ServerConfig {
 
     int SERVER_PORT = 8888;
 
+    String DEFAULT_CHARSET = "utf8";
+
 }
