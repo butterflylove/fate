@@ -1,8 +1,12 @@
 package destiny.fate.common.server;
 
 import destiny.fate.common.config.ServerConfig;
+import destiny.fate.common.config.SocketConfig;
+import destiny.fate.common.net.handler.backend.pool.MySqlDataPool;
+import destiny.fate.common.net.handler.backend.pool.MySqlDataSource;
 import destiny.fate.common.net.handler.factory.FrontHandlerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -12,7 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Created by zhangtianlong01 on 2017/9/21.
+ * Fate Server启动器
+ * @author zhangtianlong
  */
 public class FateServer extends Thread {
 
@@ -21,10 +26,16 @@ public class FateServer extends Thread {
     @Override
     public void run() {
         logger.info("Start the MySQL Sharding Proxy");
+        startServer();
     }
 
     public static void main(String[] args) {
-
+        FateServer fate = new FateServer();
+        try {
+            fate.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void startServer() {
@@ -34,11 +45,18 @@ public class FateServer extends Thread {
         EventLoopGroup workerGroup = new NioEventLoopGroup();
 
         try {
+            MySqlDataPool dataPool = new MySqlDataPool(ServerConfig.BACKEND_INIT_SIZE, ServerConfig.BACKEND_MAX_SIZE);
+            dataPool.init();
+            MySqlDataSource dataSource = new MySqlDataSource(dataPool);
+
             ServerBootstrap bootstrap = new ServerBootstrap();
 
             bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
                 .option(ChannelOption.SO_BACKLOG, 1024)
-                .childHandler(new FrontHandlerInitializer());
+                .childHandler(new FrontHandlerInitializer(dataSource))
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, SocketConfig.CONNECT_TIMEOUT_MILLIS)
+                .option(ChannelOption.SO_TIMEOUT, SocketConfig.SO_TIMEOUT);
 
             ChannelFuture future = bootstrap.bind(ServerConfig.SERVER_PORT).sync();
             future.channel().closeFuture().sync();

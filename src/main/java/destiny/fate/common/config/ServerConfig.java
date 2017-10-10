@@ -5,6 +5,10 @@ package destiny.fate.common.config;
  */
 public interface ServerConfig {
 
+    int BACKEND_INIT_SIZE = 10;
+
+    int BACKEND_MAX_SIZE = 20;
+
     int SERVER_PORT = 8888;
 
 }
