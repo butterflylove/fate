@@ -38,7 +38,7 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
+        source.setCtx(ctx);
         // 生成认证数据
         byte[] rand1 = RandomUtil.randomBytes(8);
         byte[] rand2 = RandomUtil.randomBytes(12);
@@ -86,7 +86,7 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
 
     private void success(final ChannelHandlerContext ctx) {
         // 认证成功, 替换handler
-        ctx.pipeline().replace(this, "frontCommandHandler", );
+        ctx.pipeline().replace(this, "frontCommandHandler", new FrontendCommandHandler(source));
         ByteBuf byteBuf = ctx.alloc().buffer().writeBytes(OkPacket.AUTH_OK);
         ctx.writeAndFlush(byteBuf);
     }

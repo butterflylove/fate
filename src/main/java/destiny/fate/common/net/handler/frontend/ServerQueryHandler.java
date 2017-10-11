@@ -24,6 +24,7 @@ public class ServerQueryHandler implements FrontendQueryHandler {
         int rs = ServerParser.parse(sql);
         switch (rs & 0xff) {
             case ServerParser.SELECT:
+                logger.info("execute select");
                 SelectHandler.handle(sql, source, rs >>> 8);
                 break;
         }
