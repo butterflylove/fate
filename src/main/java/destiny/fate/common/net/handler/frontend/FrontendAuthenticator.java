@@ -93,7 +93,7 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
 
     protected boolean checkPassword(byte[] password, String user) {
         // TODO config
-        String pass = "20040705WSH";
+        String pass = "123456";
         if (pass == null || pass.length() == 0) {
             if (password == null || password.length == 0) {
                 return true;

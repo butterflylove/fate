@@ -47,4 +47,20 @@ public class BackendConnection {
         syncLatch = new CountDownLatch(1);
         cmdQueue = new ConcurrentLinkedQueue<Command>();
     }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public ChannelHandlerContext getCtx() {
+        return ctx;
+    }
+
+    public void setCtx(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
 }

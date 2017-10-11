@@ -13,4 +13,9 @@ public interface ServerConfig {
 
     String DEFAULT_CHARSET = "utf8";
 
+    String USER_NAME = "root";
+
+    String PASS_WORD = "123456";
+
+    String DATABASE = "test";
 }

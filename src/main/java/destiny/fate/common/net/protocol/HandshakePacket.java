@@ -21,8 +21,19 @@ public class HandshakePacket extends MySQLPacket {
     public int serverStatus;
     public byte[] restOfScrambleBuff;
 
-    public void read() {
-        // TODO 读操作
+    public void read(BinaryPacket bin) {
+        packetLength = bin.packetLength;
+        packetId = bin.packetId;
+        MySQLMessage mm = new MySQLMessage(bin.data);
+        protocolVersion = mm.read();
+        serverVersion = mm.readBytesWithNull();
+        threadId = mm.readUB4();
+        seed = mm.readBytesWithNull();
+        serverCapabilities = mm.readUB2();
+        serverCharsetIndex = mm.read();
+        serverStatus = mm.readUB2();
+        mm.move(13);
+        restOfScrambleBuff = mm.readBytesWithNull();
     }
 
     @Override

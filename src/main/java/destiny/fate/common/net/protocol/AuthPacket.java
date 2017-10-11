@@ -1,6 +1,8 @@
 package destiny.fate.common.net.protocol;
 
 import destiny.fate.common.util.BufferUtil;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * Created by zhangtianlong01 on 2017/10/10.
@@ -22,6 +24,35 @@ public class AuthPacket extends MySQLPacket {
     public byte[] password;
 
     public String database;
+
+    @Override
+    public void write(ChannelHandlerContext ctx) {
+        ByteBuf buffer = ctx.alloc().buffer();
+        BufferUtil.writeUB3(buffer, calcPacketSize());
+        buffer.writeByte(packetId);
+        BufferUtil.writeUB4(buffer, clientFlags);
+        BufferUtil.writeUB4(buffer, maxPacketSize);
+        buffer.writeByte((byte) charsetIndex);
+        buffer.writeBytes(FILLER);
+        if (user == null) {
+            buffer.writeByte((byte) 0);
+        } else {
+            byte[] userData = user.getBytes();
+            BufferUtil.writeWithNull(buffer, userData);
+        }
+        if (password == null) {
+            buffer.writeByte((byte) 0);
+        } else {
+            BufferUtil.writeWithLength(buffer, password);
+        }
+        if (database == null) {
+            buffer.writeByte((byte) 0);
+        } else {
+            byte[] databaseData = database.getBytes();
+            BufferUtil.writeWithNull(buffer, databaseData);
+        }
+        ctx.writeAndFlush(buffer);
+    }
 
     public void read(BinaryPacket bin) {
         packetLength = bin.packetLength;
