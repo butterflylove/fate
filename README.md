@@ -6,4 +6,5 @@ Netty-based high-performance MySQL sharding middleware
 * mvn exec:java
 
 ## 当前已实现功能
-(1)MySQL的前端交互
+(1)中间件的前端交互
+(2)中间件的后端交互
