@@ -18,4 +18,10 @@ public interface ServerConfig {
     String PASS_WORD = "123456";
 
     String DATABASE = "test";
+
+    String MySQL_HOST = "127.0.0.1";
+
+    int MySQL_PORT = 3306;
+
+    int BACKEND_INITIAL_WAIT_TIME = 60;
 }

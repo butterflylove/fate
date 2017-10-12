@@ -21,7 +21,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Created by zhangtianlong01 on 2017/10/11.
+ * 后端认证Handler
+ * @author zhangtianlong
  */
 public class BackendAuthenticator extends ChannelHandlerAdapter {
 
@@ -51,7 +52,8 @@ public class BackendAuthenticator extends ChannelHandlerAdapter {
                 this.state = BackendConnState.BACKEND_AUTHED;
                 break;
             case (BackendConnState.BACKEND_AUTHED):
-
+                authOk(ctx, msg);
+                break;
             default:
 
         }
@@ -61,15 +63,19 @@ public class BackendAuthenticator extends ChannelHandlerAdapter {
         BinaryPacket bin = (BinaryPacket) msg;
         switch (bin.data[0]) {
             case OkPacket.FIELD_COUNT:
+                logger.info("Auth success!");
                 afterSuccess();
                 break;
             case ErrorPacket.FIELD_COUNT:
+                logger.info("auth failed.");
                 ErrorPacket err = new ErrorPacket();
-                // TODO
+                err.read(bin);
                 throw new ErrorPacketException("AUTH not Ok!");
             default:
                 throw new UnknownPacketException(bin.toString());
         }
+
+        // 用CommandHandler替换Authenticator
         ctx.pipeline().replace(this, "BackendCommandHandler", new BackendCommandHandler(source));
     }
 

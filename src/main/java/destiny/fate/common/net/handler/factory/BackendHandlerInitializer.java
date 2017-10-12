@@ -1,5 +1,9 @@
 package destiny.fate.common.net.handler.factory;
 
+import destiny.fate.common.net.decoder.MySqlPacketDecoder;
+import destiny.fate.common.net.handler.backend.BackendAuthenticator;
+import destiny.fate.common.net.handler.backend.BackendConnection;
+import destiny.fate.common.net.handler.backend.BackendHeadHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
@@ -17,6 +21,13 @@ public class BackendHandlerInitializer extends ChannelInitializer<SocketChannel>
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
+        BackendConnection source = factory.getConnection();
+        BackendHeadHandler firstHandler = new BackendHeadHandler(source);
+        BackendAuthenticator authenticator = new BackendAuthenticator(source);
 
+
+        ch.pipeline().addLast(new MySqlPacketDecoder());
+        ch.pipeline().addLast("BackendHeadHandler", firstHandler);
+        ch.pipeline().addLast(authenticator);
     }
 }

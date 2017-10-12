@@ -63,4 +63,12 @@ public class BackendConnection {
     public void setCtx(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
+
+    public boolean isAlive() {
+        return ctx.channel().isActive();
+    }
+
+    public void close() {
+        ctx.close();
+    }
 }
