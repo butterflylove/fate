@@ -1,7 +1,10 @@
 package destiny.fate.common.net.handler.frontend;
 
+import destiny.fate.common.net.handler.backend.pool.MySqlDataSource;
 import destiny.fate.common.net.protocol.BinaryPacket;
 import destiny.fate.common.net.protocol.MySQLMessage;
+import destiny.fate.common.net.protocol.OkPacket;
+import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +25,38 @@ public class FrontendConnection extends AbstractFrontendConnection {
     protected String charset;
     protected int charsetIndex;
     protected FrontendQueryHandler queryHandler;
+
+    private long lastInsertId;
+    private MySqlDataSource dataSource;
+    // 前端session
+//    private FrontendSession session
+
+    /**
+     * 初始化DB的同时,绑定后端连接
+     */
+    public void initDB(BinaryPacket bin) {
+        MySQLMessage mm = new MySQLMessage(bin.data);
+        mm.position(1);
+        String db = mm.readString();
+
+        // 检查schema是否已经设置
+        if (schema != null) {
+            if (schema.equals(db)) {
+                writeOk();
+            } else {
+                // TODO
+            }
+            return;
+        }
+        if (db == null) {
+            // TODO
+            return;
+        } else {
+            this.schema = db;
+            writeOk();
+            return;
+        }
+    }
 
     public long getId() {
         return id;
@@ -106,6 +141,11 @@ public class FrontendConnection extends AbstractFrontendConnection {
         } else {
             logger.error("query error");
         }
+    }
+
+    public void writeOk() {
+        ByteBuf byteBuf = ctx.alloc().buffer(OkPacket.OK.length).writeBytes(OkPacket.OK);
+        ctx.writeAndFlush(byteBuf);
     }
 
     public void close() {

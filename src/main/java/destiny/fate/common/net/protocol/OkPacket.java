@@ -6,5 +6,6 @@ package destiny.fate.common.net.protocol;
 public class OkPacket {
     public static final byte FIELD_COUNT = 0x00;
 
+    public static final byte[] OK = new byte[] { 7, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0 };
     public static final byte[] AUTH_OK = new byte[] { 7, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0 };
 }
