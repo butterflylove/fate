@@ -1,7 +1,9 @@
 package destiny.fate.common.net.handler.frontend;
 
+import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.backend.pool.MySqlDataSource;
 import destiny.fate.common.net.protocol.BinaryPacket;
+import destiny.fate.common.net.protocol.ErrorPacket;
 import destiny.fate.common.net.protocol.MySQLMessage;
 import destiny.fate.common.net.protocol.OkPacket;
 import io.netty.buffer.ByteBuf;
@@ -122,6 +124,28 @@ public class FrontendConnection extends AbstractFrontendConnection {
         this.queryHandler = queryHandler;
     }
 
+    public void writeErrMessage(byte id, int errNo, String msg) {
+        ErrorPacket err = new ErrorPacket();
+        err.packetId = id;
+        err.errno = errNo;
+        err.message = encodeString(msg, charset);
+        err.write(ctx);
+    }
+
+    private static byte[] encodeString(String src, String charset) {
+        if (src == null) {
+            return null;
+        }
+        if (charset == null) {
+            return src.getBytes();
+        }
+        try {
+            return src.getBytes(charset);
+        } catch (UnsupportedEncodingException e) {
+            return src.getBytes();
+        }
+    }
+
     public void query(BinaryPacket bin) {
         if (queryHandler != null) {
             MySQLMessage mm = new MySQLMessage(bin.data);
@@ -141,6 +165,13 @@ public class FrontendConnection extends AbstractFrontendConnection {
         } else {
             logger.error("query error");
         }
+    }
+
+    /**
+     * 获取已经状态同步过的backend
+     */
+    public BackendConnection getStateSyncBackend() {
+        return null;
     }
 
     public void writeOk() {

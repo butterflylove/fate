@@ -37,6 +37,11 @@ public class FrontendSession implements Session {
         target = new ConcurrentHashMap<RouteResultsetNode, BackendConnection>();
     }
 
+    public void writeErrMsg(int errNo, String msg) {
+        logger.warn(String.format("[FrontendConnection]ErrorNo=%d, ErrorMsg=%s", errNo, msg));
+        source.writeErrMessage((byte) 1, errNo, msg);
+    }
+
     public FrontendConnection getSource() {
         return null;
     }
@@ -67,5 +72,14 @@ public class FrontendSession implements Session {
 
     public void close() {
 
+    }
+
+    public BackendConnection getTarget(RouteResultsetNode key) {
+        BackendConnection backend = target.get(key);
+        if (backend == null) {
+            backend = source.getStateSyncBackend();
+            target.put(key, backend);
+        }
+        return backend;
     }
 }
