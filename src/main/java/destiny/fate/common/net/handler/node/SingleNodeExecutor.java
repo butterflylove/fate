@@ -11,7 +11,7 @@ import destiny.fate.common.net.route.RouteResultsetNode;
 import java.util.List;
 
 /**
- * Created by zhangtianlong on 17/11/19.
+ * @author zhangtianlong
  */
 public class SingleNodeExecutor implements ResponseHandler {
 
@@ -31,7 +31,9 @@ public class SingleNodeExecutor implements ResponseHandler {
         // 获取RouteResultset对应的Backend
         BackendConnection backend = getBackend(rrs);
         RouteResultsetNode node = rrs.getNodes()[0];
-
+        Command command = session.getSource().getFrontendCommand(node.getStatement(), node.getSqlType());
+        backend.postCommand(command);
+        backend.fireCmd();
     }
 
     public void fieldListResponse(List<BinaryPacket> fieldList) {

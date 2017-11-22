@@ -71,4 +71,19 @@ public class BackendConnection {
     public void close() {
         ctx.close();
     }
+
+    public void postCommand(Command command) {
+        cmdQueue.offer(command);
+    }
+
+    public Command peekCommand() {
+        return cmdQueue.peek();
+    }
+
+    public void fireCmd() {
+        Command command = peekCommand();
+        if (command != null) {
+            ctx.writeAndFlush(command.getCmdByteBuf(ctx));
+        }
+    }
 }
