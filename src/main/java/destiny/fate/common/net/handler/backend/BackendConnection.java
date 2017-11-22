@@ -44,8 +44,8 @@ public class BackendConnection {
 
     public BackendConnection(MySqlDataPool mySqlDataPool) {
         this.mySqlDataPool = mySqlDataPool;
-        syncLatch = new CountDownLatch(1);
-        cmdQueue = new ConcurrentLinkedQueue<Command>();
+        this.syncLatch = new CountDownLatch(1);
+        this.cmdQueue = new ConcurrentLinkedQueue<Command>();
     }
 
     public long getId() {
@@ -85,5 +85,9 @@ public class BackendConnection {
         if (command != null) {
             ctx.writeAndFlush(command.getCmdByteBuf(ctx));
         }
+    }
+
+    public Command pollCommand() {
+        return cmdQueue.poll();
     }
 }

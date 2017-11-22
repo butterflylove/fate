@@ -13,6 +13,7 @@ public interface ServerConfig {
 
     String DEFAULT_CHARSET = "utf8";
 
+    /******** 后端数据库配置  *******/
     String USER_NAME = "root";
 
     String PASS_WORD = "123456";
@@ -24,4 +25,7 @@ public interface ServerConfig {
     int MySQL_PORT = 3306;
 
     int BACKEND_INITIAL_WAIT_TIME = 60;
+
+    int BACKEND_CONNECT_RETRY_TIMES = 3;
+
 }

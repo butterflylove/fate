@@ -27,7 +27,7 @@ public class BackendHandlerInitializer extends ChannelInitializer<SocketChannel>
 
 
         ch.pipeline().addLast(new MySqlPacketDecoder());
-        ch.pipeline().addLast("BackendHeadHandler", firstHandler);
+        ch.pipeline().addLast(BackendHeadHandler.HANDLER_NAME, firstHandler);
         ch.pipeline().addLast(authenticator);
     }
 }

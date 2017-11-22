@@ -2,6 +2,7 @@ package destiny.fate.common.net.handler.backend.pool;
 
 import destiny.fate.common.config.ServerConfig;
 import destiny.fate.common.config.SocketConfig;
+import destiny.fate.common.net.exception.RetryConnectFailException;
 import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.backend.BackendHeadHandler;
 import destiny.fate.common.net.handler.factory.BackendConnectionFactory;
@@ -174,6 +175,50 @@ public class MySqlDataPool {
         initialized.compareAndSet(false, true);
     }
 
+    public BackendConnection getBackend() {
+        BackendConnection backend = null;
+        lock.lock();
+        try {
+            // idleCount初始为0
+            if (idleCount >= 1 && items[idleCount-1] != null) {
+                backend = items[idleCount-1];
+                idleCount--;
+                return backend;
+            }
+        } finally {
+            lock.unlock();
+        }
+        // create new connection
+        logger.info("create new connection");
+        backend = createNewConnection();
+        return backend;
+    }
+
+    private BackendConnection createNewConnection() {
+        for (int i = 0; i < ServerConfig.BACKEND_CONNECT_RETRY_TIMES; i++) {
+            ChannelFuture future = b.connect(ServerConfig.MySQL_HOST, ServerConfig.MySQL_PORT);
+            BackendConnection backend = getBackendConnFromFutrue(future);
+            if (backend != null) {
+                return backend;
+            }
+        }
+        throw new RetryConnectFailException("Retry Connect Error Host:" + ServerConfig.MySQL_HOST
+                + " Port:" + ServerConfig.MySQL_PORT);
+    }
+
+    private BackendConnection getBackendConnFromFutrue(ChannelFuture future) {
+        try {
+            future.sync();
+            BackendHeadHandler firstHandler = (BackendHeadHandler) future.channel().pipeline()
+                    .get(BackendHeadHandler.HANDLER_NAME);
+            // TODO
+            //firstHandler.getSource().syncLatch.await();
+            return firstHandler.getSource();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     private BackendConnection getInitBackendConnFromFuture(ChannelFuture future) {
         try {

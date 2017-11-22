@@ -33,6 +33,7 @@ public class SingleNodeExecutor implements ResponseHandler {
         RouteResultsetNode node = rrs.getNodes()[0];
         Command command = session.getSource().getFrontendCommand(node.getStatement(), node.getSqlType());
         backend.postCommand(command);
+
         backend.fireCmd();
     }
 
