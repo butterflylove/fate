@@ -22,6 +22,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * 后端认证Handler
+ *
  * @author zhangtianlong
  */
 public class BackendAuthenticator extends ChannelHandlerAdapter {
@@ -104,6 +105,7 @@ public class BackendAuthenticator extends ChannelHandlerAdapter {
     private void auth(HandshakePacket hsp, ChannelHandlerContext ctx)
             throws UnsupportedEncodingException, NoSuchAlgorithmException {
         AuthPacket ap = new AuthPacket();
+        ap.packetId = 1;
         ap.clientFlags = CLIENT_FLAGS;
         ap.maxPacketSize = MAX_PACKET_SIZE;
         ap.charsetIndex = source.charsetIndex;

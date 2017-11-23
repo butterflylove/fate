@@ -26,6 +26,15 @@ public class RowDataPacket extends MySQLPacket {
         fieldValues.add(value);
     }
 
+    public void read(byte[] data) {
+        MySQLMessage mm = new MySQLMessage(data);
+        packetLength = mm.readUB3();
+        packetId = mm.read();
+        for (int i = 0; i < fieldCount; i++) {
+            fieldValues.add(mm.readBytesWithLength());
+        }
+    }
+
     @Override
     public ByteBuf writeBuf(ByteBuf buffer, ChannelHandlerContext ctx) {
         BufferUtil.writeUB3(buffer, calcPacketSize());

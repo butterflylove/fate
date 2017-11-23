@@ -25,6 +25,44 @@ public class FieldPacket extends MySQLPacket {
     public byte decimals;
     public byte[] definition;
 
+    /**
+     * 把字节数组转换成FieldPacket
+     */
+    public void read(byte[] data) {
+        MySQLMessage mm = new MySQLMessage(data);
+        this.packetLength = mm.readUB3();
+        this.packetId = mm.read();
+
+    }
+
+    /**
+     * 把BinaryPacket转变成FieldPacket
+     */
+    public void read(BinaryPacket bin) {
+        this.packetLength = bin.packetLength;
+        this.packetId = bin.packetId;
+        readBody(new MySQLMessage(bin.data));
+    }
+
+    private void readBody(MySQLMessage mm) {
+        this.catalog = mm.readBytesWithLength();
+        this.db = mm.readBytesWithLength();
+        this.table = mm.readBytesWithLength();
+        this.orgTable = mm.readBytesWithLength();
+        this.name = mm.readBytesWithLength();
+        this.orgName = mm.readBytesWithLength();
+        mm.move(1);
+        this.charsetIndex = mm.readUB2();
+        this.length = mm.readUB4();
+        this.type = mm.read() & 0xff;
+        this.flags = mm.readUB2();
+        this.decimals = mm.read();
+        mm.move(FILLER.length);
+        if (mm.hasRemaining()) {
+            this.definition = mm.readBytesWithLength();
+        }
+    }
+
     @Override
     public int calcPacketSize() {
         int size = (catalog == null ? 1 : BufferUtil.getLength(catalog));

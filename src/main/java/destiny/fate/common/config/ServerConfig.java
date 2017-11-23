@@ -5,6 +5,12 @@ package destiny.fate.common.config;
  */
 public interface ServerConfig {
 
+    /******* 前端配置 **********/
+
+    String FRONTEDN_PASS_WORD = "123456";
+
+
+
     int BACKEND_INIT_SIZE = 10;
 
     int BACKEND_MAX_SIZE = 20;

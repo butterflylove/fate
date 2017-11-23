@@ -21,6 +21,7 @@ public class HandshakePacket extends MySQLPacket {
     public int serverStatus;
     public byte[] restOfScrambleBuff;
 
+
     public void read(BinaryPacket bin) {
         packetLength = bin.packetLength;
         packetId = bin.packetId;

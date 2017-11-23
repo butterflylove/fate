@@ -2,6 +2,7 @@ package destiny.fate.common.net.handler.frontend;
 
 import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.backend.pool.MySqlDataSource;
+import destiny.fate.common.net.handler.session.FrontendSession;
 import destiny.fate.common.net.protocol.BinaryPacket;
 import destiny.fate.common.net.protocol.ErrorPacket;
 import destiny.fate.common.net.protocol.MySQLMessage;
@@ -27,11 +28,14 @@ public class FrontendConnection extends AbstractFrontendConnection {
     protected String charset;
     protected int charsetIndex;
     protected FrontendQueryHandler queryHandler;
-
     private long lastInsertId;
     private MySqlDataSource dataSource;
     // 前端session
-//    private FrontendSession session
+    private FrontendSession session;
+    private volatile int txIsolation;
+    private volatile boolean autoCommit = true;
+
+    private static final long AUTH_TIMEOUT = 15 * 1000L;
 
     /**
      * 初始化DB的同时,绑定后端连接
@@ -40,10 +44,12 @@ public class FrontendConnection extends AbstractFrontendConnection {
         MySQLMessage mm = new MySQLMessage(bin.data);
         mm.position(1);
         String db = mm.readString();
+        logger.debug("init db ==== " + db);
 
         // 检查schema是否已经设置
         if (schema != null) {
             if (schema.equals(db)) {
+                logger.debug("init success");
                 writeOk();
             } else {
                 // TODO
@@ -54,6 +60,7 @@ public class FrontendConnection extends AbstractFrontendConnection {
             // TODO
             return;
         } else {
+            logger.debug("init success");
             this.schema = db;
             writeOk();
             return;
@@ -122,6 +129,14 @@ public class FrontendConnection extends AbstractFrontendConnection {
 
     public void setQueryHandler(FrontendQueryHandler queryHandler) {
         this.queryHandler = queryHandler;
+    }
+
+    public MySqlDataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(MySqlDataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     public void writeErrMessage(byte id, int errNo, String msg) {

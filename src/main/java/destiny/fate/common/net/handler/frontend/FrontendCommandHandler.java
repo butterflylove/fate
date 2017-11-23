@@ -28,9 +28,11 @@ public class FrontendCommandHandler extends ChannelHandlerAdapter {
         switch (type) {
             case MySQLPacket.COM_INIT_DB:
                 // just init the frontend
-//                source.initDB(bin);
+                logger.debug("COM_INIT_DB-----------");
+                source.initDB(bin);
                 break;
             case MySQLPacket.COM_QUERY:
+                logger.debug("COM_QUERY-------");
                 source.query(bin);
                 break;
         }

@@ -5,15 +5,21 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
- * Created by zhangtianlong01 on 2017/10/11.
+ * @author zhangtianlong
  */
 public class ResultSetHeaderPacket extends MySQLPacket {
 
     public int fieldCount;
     public long extra;
 
-    public void read() {
-
+    public void read(byte[] data) {
+        MySQLMessage mm = new MySQLMessage(data);
+        this.packetLength = mm.readUB3();
+        this.packetId = mm.read();
+        this.fieldCount = (int) mm.readLength();
+        if (mm.hasRemaining()) {
+            this.extra = mm.readLength();
+        }
     }
 
     @Override

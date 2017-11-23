@@ -1,5 +1,6 @@
 package destiny.fate.common.net.handler.frontend;
 
+import destiny.fate.common.config.ServerConfig;
 import destiny.fate.common.net.protocol.AuthPacket;
 import destiny.fate.common.net.protocol.BinaryPacket;
 import destiny.fate.common.net.protocol.Capabilities;
@@ -33,8 +34,9 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
         this.source = source;
     }
 
+
     /**
-     * 发送HandShake包
+     * 连接建立成功,发送握手包
      */
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -64,6 +66,9 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
         hs.write(ctx);
     }
 
+    /**
+     * 有数据可以读取,读取Auth包
+     */
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BinaryPacket bin = (BinaryPacket) msg;
@@ -73,6 +78,7 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
         authPacket.read(bin);
         // check password
         if (!checkPassword(authPacket.password, authPacket.user)) {
+            // TODO 密码错误返回错误消息
             logger.warn("access denied");
             return;
         }
@@ -93,7 +99,7 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
 
     protected boolean checkPassword(byte[] password, String user) {
         // TODO config
-        String pass = "123456";
+        String pass = ServerConfig.FRONTEDN_PASS_WORD;
         if (pass == null || pass.length() == 0) {
             if (password == null || password.length == 0) {
                 return true;
