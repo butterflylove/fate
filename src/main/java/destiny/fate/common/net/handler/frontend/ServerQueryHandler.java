@@ -27,6 +27,15 @@ public class ServerQueryHandler implements FrontendQueryHandler {
                 logger.info("execute select");
                 SelectHandler.handle(sql, source, rs >>> 8);
                 break;
+            case ServerParser.USE:
+                logger.info("execute use");
+                UseHandler.handle(sql, source, rs >>> 8);
+                break;
+            case ServerParser.SHOW:
+                // TODO 支持逻辑上的数据源
+                logger.info("execute show");
+                ShowHandler.handle(sql, source, rs >>> 8);
+                break;
         }
     }
 }

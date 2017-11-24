@@ -3,18 +3,24 @@ package destiny.fate.route;
 import destiny.fate.common.net.route.RouteResultset;
 import destiny.fate.common.net.route.RouteResultsetNode;
 import destiny.fate.parser.ServerParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author zhangtianlong
  */
 public class FateStatementParser {
 
+    private static final Logger logger = LoggerFactory.getLogger(FateStatementParser.class);
+
     public static RouteResultset parser(String sql, int sqlType) {
         switch (sqlType) {
             case ServerParser.SELECT:
-                return null;
+                logger.info("parse into select.");
+                return multiParse(sql);
         }
-        return null;
+        return multiParse(sql);
     }
 
     public static RouteResultset multiParse(String sql) {

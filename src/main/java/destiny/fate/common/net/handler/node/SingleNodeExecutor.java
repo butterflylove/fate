@@ -58,6 +58,6 @@ public class SingleNodeExecutor implements ResponseHandler {
     }
 
     private BackendConnection getBackend(RouteResultset rrs) {
-        return null;
+        return session.getTarget(rrs.getNodes()[0]);
     }
 }

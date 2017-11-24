@@ -7,6 +7,7 @@ import destiny.fate.common.net.protocol.BinaryPacket;
 import destiny.fate.common.net.protocol.ErrorPacket;
 import destiny.fate.common.net.protocol.MySQLMessage;
 import destiny.fate.common.net.protocol.OkPacket;
+import destiny.fate.common.net.protocol.util.ErrorCode;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,10 @@ public class FrontendConnection extends AbstractFrontendConnection {
     private volatile boolean autoCommit = true;
 
     private static final long AUTH_TIMEOUT = 15 * 1000L;
+
+    public FrontendConnection() {
+        this.session = new FrontendSession(this);
+    }
 
     /**
      * 初始化DB的同时,绑定后端连接
@@ -147,6 +152,11 @@ public class FrontendConnection extends AbstractFrontendConnection {
         err.write(ctx);
     }
 
+    public void writeErrMessage(int errNo, String msg) {
+        logger.warn(String.format("[FrontendConnection]ErrorNo=%d,ErrorMsg=%s", errNo, msg));
+        writeErrMessage((byte) 1, errNo, msg);
+    }
+
     private static byte[] encodeString(String src, String charset) {
         if (src == null) {
             return null;
@@ -183,10 +193,23 @@ public class FrontendConnection extends AbstractFrontendConnection {
     }
 
     /**
+     * 调用后端数据库去执行
+     */
+    public void execute(String sql, int type) {
+        this.schema="test";
+        if (schema == null) {
+            writeErrMessage(ErrorCode.ER_NO_DB_ERROR, "No database selected");
+        } else {
+            session.execute(sql, type);
+        }
+    }
+
+    /**
      * 获取已经状态同步过的backend
      */
     public BackendConnection getStateSyncBackend() {
-        return null;
+        BackendConnection backend = dataSource.getBackend();
+        return backend;
     }
 
     public void writeOk() {

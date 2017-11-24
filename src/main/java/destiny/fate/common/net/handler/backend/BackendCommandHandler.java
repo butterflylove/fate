@@ -4,6 +4,8 @@ import destiny.fate.common.net.exception.UnknownPacketException;
 import destiny.fate.common.net.handler.backend.cmd.CmdType;
 import destiny.fate.common.net.handler.backend.cmd.Command;
 import destiny.fate.common.net.protocol.BinaryPacket;
+import destiny.fate.common.net.protocol.EOFPacket;
+import destiny.fate.common.net.protocol.ErrorPacket;
 import destiny.fate.parser.ServerParser;
 import destiny.fate.common.net.protocol.OkPacket;
 import io.netty.channel.ChannelHandlerAdapter;
@@ -16,6 +18,8 @@ import java.util.List;
 
 /**
  * 后端命令执行handler
+ *
+ * @author zhangtianlong
  */
 public class BackendCommandHandler extends ChannelHandlerAdapter {
 
@@ -69,13 +73,17 @@ public class BackendCommandHandler extends ChannelHandlerAdapter {
     }
 
     private boolean handleNormalResult(BinaryPacket bin, CmdType cmdType) {
-        switch (bin.data[0]) {
+        byte flag = bin.data[0];
+        logger.info("result flag = {}", Integer.toHexString(flag));
+        switch (flag) {
             case OkPacket.FIELD_COUNT:
                 if (cmdType == CmdType.BACKEND_TYPE) {
                     logger.info("backend command okay");
                 } else {
                     logger.info("frontend command okay");
                 }
+                break;
+            case ErrorPacket.FIELD_COUNT:
                 break;
             default:
                 throw new UnknownPacketException(bin.toString());

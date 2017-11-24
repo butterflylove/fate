@@ -1,6 +1,9 @@
 package destiny.fate.common.net.decoder;
 
 import destiny.fate.common.net.protocol.BinaryPacket;
+import destiny.fate.common.net.protocol.EOFPacket;
+import destiny.fate.common.net.protocol.ErrorPacket;
+import destiny.fate.common.net.protocol.OkPacket;
 import destiny.fate.common.util.ByteUtil;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,12 +26,13 @@ public class MySqlPacketDecoder extends ByteToMessageDecoder {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+        // 防止TCP粘包
         if (in.readableBytes() < PACKET_HEADER_SIZE) {
             return;
         }
         in.markReaderIndex();
         int packetLength = ByteUtil.readUB3(in);
-        // 过载保护
+        // 过载保护,MySQL包的最大容量为16M
         if (packetLength > MAX_PACKET_SIZE) {
             throw new IllegalArgumentException("Packet size over the limit " + MAX_PACKET_SIZE);
         }
@@ -42,6 +46,18 @@ public class MySqlPacketDecoder extends ByteToMessageDecoder {
         packet.packetLength = packetLength;
         packet.packetId = packetId;
         packet.data = in.readBytes(packetLength).array();
+
+        byte fieldCount = packet.data[0];
+        if (fieldCount == OkPacket.FIELD_COUNT) {
+            logger.info("this is Ok Packet");
+        }
+        if (fieldCount == ErrorPacket.FIELD_COUNT) {
+            logger.info("this is Error Packet");
+        }
+        if (fieldCount == EOFPacket.FIELD_COUNT) {
+            logger.info("this is EOF Packet");
+        }
+
         logger.info("packet length={}, packetId={}, data length={}", packetLength, packetId, packet.data.length);
         logger.info("data={}", new String(packet.data));
         if (packet.data == null || packet.data.length == 0) {

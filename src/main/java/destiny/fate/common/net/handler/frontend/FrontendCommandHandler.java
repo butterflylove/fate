@@ -25,10 +25,11 @@ public class FrontendCommandHandler extends ChannelHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         BinaryPacket bin = (BinaryPacket) msg;
         byte type = bin.data[0];
+        logger.info("command FIELD_COUNT={}", type);
         switch (type) {
             case MySQLPacket.COM_INIT_DB:
                 // just init the frontend
-                logger.debug("COM_INIT_DB-----------");
+                logger.info("COM_INIT_DB-----------");
                 source.initDB(bin);
                 break;
             case MySQLPacket.COM_QUERY:

@@ -3,6 +3,7 @@ package destiny.fate.common.net.handler.frontend;
 import destiny.fate.common.net.response.SelectDatabase;
 import destiny.fate.common.net.response.SelectVersionComment;
 import destiny.fate.parser.ServerParseSelect;
+import destiny.fate.parser.ServerParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,10 @@ public class SelectHandler {
             case ServerParseSelect.DATABASE:
                 logger.info("SELECT DATABASE()======");
                 SelectDatabase.response(c);
+                break;
+            default:
+                logger.info("后端进行查询");
+                c.execute(stmt, ServerParser.SELECT);
                 break;
         }
     }

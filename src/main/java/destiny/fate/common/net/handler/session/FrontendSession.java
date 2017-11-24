@@ -7,6 +7,7 @@ import destiny.fate.common.net.handler.node.SingleNodeExecutor;
 import destiny.fate.common.net.protocol.util.ErrorCode;
 import destiny.fate.common.net.route.RouteResultset;
 import destiny.fate.common.net.route.RouteResultsetNode;
+import destiny.fate.route.FateStatementParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ public class FrontendSession implements Session {
     }
 
     public FrontendConnection getSource() {
-        return null;
+        return this.source;
     }
 
     public int getTargetCount() {
@@ -102,7 +103,8 @@ public class FrontendSession implements Session {
     }
 
     private RouteResultset route(String sql, int type) {
-        return null;
+        RouteResultset routeResultset = FateStatementParser.parser(sql, type);
+        return routeResultset;
     }
 
     public BackendConnection getTarget(RouteResultsetNode key) {
