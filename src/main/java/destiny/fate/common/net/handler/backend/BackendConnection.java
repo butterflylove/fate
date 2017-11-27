@@ -72,6 +72,11 @@ public class BackendConnection {
         ctx.close();
     }
 
+    public void discard() {
+        mySqlDataPool.discard(this);
+        close();
+    }
+
     public void postCommand(Command command) {
         cmdQueue.offer(command);
     }
@@ -89,5 +94,9 @@ public class BackendConnection {
 
     public Command pollCommand() {
         return cmdQueue.poll();
+    }
+
+    public void setFrontend(FrontendConnection frontend) {
+        this.frontend = frontend;
     }
 }

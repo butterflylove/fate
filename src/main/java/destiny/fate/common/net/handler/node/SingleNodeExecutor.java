@@ -38,7 +38,7 @@ public class SingleNodeExecutor implements ResponseHandler {
     }
 
     public void fieldListResponse(List<BinaryPacket> fieldList) {
-
+        writeFieldList(fieldList);
     }
 
     public void errorResponse(BinaryPacket bin) {
@@ -50,14 +50,22 @@ public class SingleNodeExecutor implements ResponseHandler {
     }
 
     public void rowResponse(BinaryPacket bin) {
-
+        bin.write(session.getCtx());
     }
 
-    public void lastEof(BinaryPacket bin) {
-
+    public void lastEofResponse(BinaryPacket bin) {
+        bin.write(session.getCtx());
+        // TODO 回收后端连接
     }
 
     private BackendConnection getBackend(RouteResultset rrs) {
         return session.getTarget(rrs.getNodes()[0]);
+    }
+
+    private void writeFieldList(List<BinaryPacket> fieldList) {
+        for (BinaryPacket bin : fieldList) {
+            bin.write(session.getCtx());
+        }
+        fieldList.clear();
     }
 }

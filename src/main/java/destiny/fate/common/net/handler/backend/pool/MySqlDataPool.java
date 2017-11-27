@@ -232,6 +232,10 @@ public class MySqlDataPool {
         return null;
     }
 
+    public void discard(BackendConnection backend) {
+        logger.info("Backend Connection discard it");
+    }
+
     public static void main(String[] args) {
         AtomicBoolean x = new AtomicBoolean(false);
         x.set(true);

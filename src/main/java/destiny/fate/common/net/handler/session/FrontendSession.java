@@ -8,6 +8,7 @@ import destiny.fate.common.net.protocol.util.ErrorCode;
 import destiny.fate.common.net.route.RouteResultset;
 import destiny.fate.common.net.route.RouteResultsetNode;
 import destiny.fate.route.FateStatementParser;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,6 +103,10 @@ public class FrontendSession implements Session {
 
     }
 
+    public ChannelHandlerContext getCtx() {
+        return source.getCtx();
+    }
+
     private RouteResultset route(String sql, int type) {
         RouteResultset routeResultset = FateStatementParser.parser(sql, type);
         return routeResultset;
@@ -114,5 +119,9 @@ public class FrontendSession implements Session {
             target.put(key, backend);
         }
         return backend;
+    }
+
+    public ResponseHandler getResponseHandler() {
+        return responseHandler;
     }
 }

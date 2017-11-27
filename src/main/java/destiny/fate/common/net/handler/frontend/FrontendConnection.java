@@ -2,6 +2,7 @@ package destiny.fate.common.net.handler.frontend;
 
 import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.backend.pool.MySqlDataSource;
+import destiny.fate.common.net.handler.node.ResponseHandler;
 import destiny.fate.common.net.handler.session.FrontendSession;
 import destiny.fate.common.net.protocol.BinaryPacket;
 import destiny.fate.common.net.protocol.ErrorPacket;
@@ -25,7 +26,7 @@ public class FrontendConnection extends AbstractFrontendConnection {
     protected String user;
     protected String host;
     protected int port;
-    protected String schema;
+    protected String schema="test";
     protected String charset;
     protected int charsetIndex;
     protected FrontendQueryHandler queryHandler;
@@ -209,6 +210,7 @@ public class FrontendConnection extends AbstractFrontendConnection {
      */
     public BackendConnection getStateSyncBackend() {
         BackendConnection backend = dataSource.getBackend();
+        backend.setFrontend(this);
         return backend;
     }
 
@@ -220,5 +222,9 @@ public class FrontendConnection extends AbstractFrontendConnection {
     public void close() {
         logger.info("close frontend connection, host:{}, port:{}", host, port);
         // TODO
+    }
+
+    public ResponseHandler getResponseHandler() {
+        return session.getResponseHandler();
     }
 }

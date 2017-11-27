@@ -22,5 +22,5 @@ public interface ResponseHandler {
 
     void rowResponse(BinaryPacket bin);
 
-    void lastEof(BinaryPacket bin);
+    void lastEofResponse(BinaryPacket bin);
 }

@@ -33,7 +33,7 @@ public class FrontConnectionFactory {
         FrontendConnection connection = new FrontendConnection();
         connection.setDataSource(dataSource);
         connection.setQueryHandler(new ServerQueryHandler(connection));
-        connection.setId(ACCEPT_ID_GENERATOR.getAndIncrement());
+        connection.setId(ACCEPT_ID_GENERATOR.getAndIncrement() + 99);
         logger.info("connection id={}", connection.getId());
         connection.setCharset(ServerConfig.DEFAULT_CHARSET);
         return connection;

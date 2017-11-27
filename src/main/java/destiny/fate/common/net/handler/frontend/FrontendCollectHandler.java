@@ -27,6 +27,7 @@ public class FrontendCollectHandler extends ChannelHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         logger.info("a connection accept!");
+        logger.info("frontend connection id={}", source.getId());
         frontends.put(source.getId(), source);
         super.channelActive(ctx);
     }
@@ -34,8 +35,8 @@ public class FrontendCollectHandler extends ChannelHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         logger.info("a connection break!");
-        frontends.remove(source.getId());
-        source.close();
+//        frontends.remove(source.getId());
+//        source.close();
         super.channelInactive(ctx);
     }
 }

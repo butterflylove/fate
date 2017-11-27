@@ -4,6 +4,7 @@ import destiny.fate.common.net.decoder.MySqlPacketDecoder;
 import destiny.fate.common.net.handler.backend.BackendAuthenticator;
 import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.backend.BackendHeadHandler;
+import destiny.fate.common.net.handler.backend.BackendTailHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 
@@ -24,10 +25,11 @@ public class BackendHandlerInitializer extends ChannelInitializer<SocketChannel>
         BackendConnection source = factory.getConnection();
         BackendHeadHandler firstHandler = new BackendHeadHandler(source);
         BackendAuthenticator authenticator = new BackendAuthenticator(source);
-
+        BackendTailHandler tailHandler = new BackendTailHandler(source);
 
         ch.pipeline().addLast(new MySqlPacketDecoder());
         ch.pipeline().addLast(BackendHeadHandler.HANDLER_NAME, firstHandler);
         ch.pipeline().addLast(authenticator);
+        ch.pipeline().addLast(tailHandler);
     }
 }

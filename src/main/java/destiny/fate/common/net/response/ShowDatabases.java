@@ -60,7 +60,7 @@ public class ShowDatabases {
             buffer = row.writeBuf(buffer, ctx);
         }
 
-        // write lastEof
+        // write lastEofResponse
         EOFPacket lastEof = new EOFPacket();
         lastEof.packetId = ++packetId;
         buffer = lastEof.writeBuf(buffer, ctx);
