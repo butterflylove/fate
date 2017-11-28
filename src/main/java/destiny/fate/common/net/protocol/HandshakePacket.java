@@ -51,7 +51,7 @@ public class HandshakePacket extends MySQLPacket {
         BufferUtil.writeUB2(buffer, serverStatus);
         buffer.writeBytes(FILLER_13);
         BufferUtil.writeWithNull(buffer, restOfScrambleBuff);
-        // 直接写入, 不适用队列做异步化
+        // 直接写入, 不使用队列做异步化
         // TODO 做队列异步化优化
         ctx.writeAndFlush(buffer);
     }

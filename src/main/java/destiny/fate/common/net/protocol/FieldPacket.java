@@ -32,7 +32,7 @@ public class FieldPacket extends MySQLPacket {
         MySQLMessage mm = new MySQLMessage(data);
         this.packetLength = mm.readUB3();
         this.packetId = mm.read();
-
+        readBody(mm);
     }
 
     /**

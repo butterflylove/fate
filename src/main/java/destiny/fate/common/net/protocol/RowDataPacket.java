@@ -36,6 +36,22 @@ public class RowDataPacket extends MySQLPacket {
     }
 
     @Override
+    public void write(ChannelHandlerContext ctx) {
+        ByteBuf buf = ctx.alloc().buffer();
+        BufferUtil.writeUB3(buf, calcPacketSize());
+        buf.writeByte(packetId);
+        for (int i = 0; i < fieldCount; i++) {
+            byte[] fieldValue = fieldValues.get(i);
+            if (fieldValue == null || fieldValue.length == 0) {
+                buf.writeByte(RowDataPacket.NULL_MARK);
+            } else {
+                BufferUtil.writeLength(buf, fieldValue.length);
+                buf.writeBytes(fieldValue);
+            }
+        }
+    }
+
+    @Override
     public ByteBuf writeBuf(ByteBuf buffer, ChannelHandlerContext ctx) {
         BufferUtil.writeUB3(buffer, calcPacketSize());
         buffer.writeByte(packetId);

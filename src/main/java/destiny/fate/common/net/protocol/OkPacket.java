@@ -62,6 +62,6 @@ public class OkPacket extends MySQLPacket {
 
     @Override
     protected String getPacketInfo() {
-        return null;
+        return "MySQL OK Packet";
     }
 }
