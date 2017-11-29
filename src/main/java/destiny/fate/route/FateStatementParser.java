@@ -18,16 +18,25 @@ public class FateStatementParser {
         switch (sqlType) {
             case ServerParser.SELECT:
                 logger.info("parse into select.");
-                return multiParse(sql);
+                return multiParse(sql, ServerParser.SELECT);
+            case ServerParser.DELETE:
+                logger.info("parse into delete");
+                return multiParse(sql, ServerParser.DELETE);
+            case ServerParser.UPDATE:
+                logger.info("parse into update");
+                return multiParse(sql, ServerParser.UPDATE);
+            case ServerParser.INSERT:
+                logger.info("parse into insert");
+                return multiParse(sql, ServerParser.INSERT);
         }
-        return multiParse(sql);
+        return multiParse(sql, ServerParser.SELECT);
     }
 
-    public static RouteResultset multiParse(String sql) {
+    public static RouteResultset multiParse(String sql, int sqlType) {
         RouteResultset routeResultset = new RouteResultset();
         RouteResultsetNode[] nodes = new RouteResultsetNode[1];
         for (int i = 0; i < 1; i++) {
-            RouteResultsetNode node = new RouteResultsetNode(String.valueOf(1), sql, ServerParser.SELECT);
+            RouteResultsetNode node = new RouteResultsetNode(String.valueOf(1), sql, sqlType);
             nodes[i] = node;
         }
         routeResultset.setNodes(nodes);

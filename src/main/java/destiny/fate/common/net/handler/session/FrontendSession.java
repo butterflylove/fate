@@ -25,12 +25,10 @@ public class FrontendSession implements Session {
     private static final Logger logger = LoggerFactory.getLogger(FrontendSession.class);
 
     private FrontendConnection source;
-
     /**
      * 事务是否被打断
      */
     private volatile boolean txInterrupted;
-
     /**
      * 事务被打断保存的信息
      */
@@ -39,8 +37,6 @@ public class FrontendSession implements Session {
     private final ConcurrentHashMap<RouteResultsetNode, BackendConnection> target;
 
     private final SingleNodeExecutor singleNodeExecutor;
-
-
     /**
      * 处理当前SQL的handler,可以是single也可能是multi
      */
@@ -123,5 +119,13 @@ public class FrontendSession implements Session {
 
     public ResponseHandler getResponseHandler() {
         return responseHandler;
+    }
+
+    public void release() {
+        for (BackendConnection backend : target.values()) {
+            backend.recycle();
+        }
+        logger.info("session has been release");
+        target.clear();
     }
 }

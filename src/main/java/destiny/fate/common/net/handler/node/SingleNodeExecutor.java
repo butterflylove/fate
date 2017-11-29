@@ -4,6 +4,7 @@ import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.backend.cmd.Command;
 import destiny.fate.common.net.handler.session.FrontendSession;
 import destiny.fate.common.net.protocol.BinaryPacket;
+import destiny.fate.common.net.protocol.OkPacket;
 import destiny.fate.common.net.protocol.util.ErrorCode;
 import destiny.fate.common.net.route.RouteResultset;
 import destiny.fate.common.net.route.RouteResultsetNode;
@@ -11,6 +12,8 @@ import destiny.fate.common.net.route.RouteResultsetNode;
 import java.util.List;
 
 /**
+ * 单节点后端执行器
+ *
  * @author zhangtianlong
  */
 public class SingleNodeExecutor implements ResponseHandler {
@@ -42,11 +45,20 @@ public class SingleNodeExecutor implements ResponseHandler {
     }
 
     public void errorResponse(BinaryPacket bin) {
-
+        bin.write(session.getCtx());
+        if (session.getSource().isAutoCommit()) {
+            session.release();
+        }
     }
 
     public void okResponse(BinaryPacket bin) {
-
+        OkPacket ok = new OkPacket();
+        ok.read(bin);
+        session.getSource().setLastInsertId(ok.insertId);
+        bin.write(session.getCtx());
+        if (session.getSource().isAutoCommit()) {
+            session.release();
+        }
     }
 
     public void rowResponse(BinaryPacket bin) {
@@ -55,7 +67,9 @@ public class SingleNodeExecutor implements ResponseHandler {
 
     public void lastEofResponse(BinaryPacket bin) {
         bin.write(session.getCtx());
-        // TODO 回收后端连接
+        if (session.getSource().isAutoCommit()) {
+            session.release();
+        }
     }
 
     private BackendConnection getBackend(RouteResultset rrs) {

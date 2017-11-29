@@ -36,6 +36,9 @@ public class ServerQueryHandler implements FrontendQueryHandler {
                 logger.info("execute show");
                 ShowHandler.handle(sql, source, rs >>> 8);
                 break;
+            default:
+                logger.info("default execute");
+                source.execute(sql, rs);
         }
     }
 }

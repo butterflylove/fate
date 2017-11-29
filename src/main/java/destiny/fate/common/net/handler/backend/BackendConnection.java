@@ -99,4 +99,12 @@ public class BackendConnection {
     public void setFrontend(FrontendConnection frontend) {
         this.frontend = frontend;
     }
+
+    /**
+     * 回收连接
+     */
+    public void recycle() {
+        logger.info("Backend Connection has been recycled.");
+        mySqlDataPool.putBackend(this);
+    }
 }

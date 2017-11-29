@@ -33,7 +33,7 @@ public class FrontendCommandHandler extends ChannelHandlerAdapter {
                 source.initDB(bin);
                 break;
             case MySQLPacket.COM_QUERY:
-                logger.debug("COM_QUERY-------");
+                logger.info("COM_QUERY-------");
                 source.query(bin);
                 break;
         }

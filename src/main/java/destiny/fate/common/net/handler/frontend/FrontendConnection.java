@@ -129,6 +129,14 @@ public class FrontendConnection extends AbstractFrontendConnection {
         this.charsetIndex = charsetIndex;
     }
 
+    public long getLastInsertId() {
+        return lastInsertId;
+    }
+
+    public void setLastInsertId(long lastInsertId) {
+        this.lastInsertId = lastInsertId;
+    }
+
     public FrontendQueryHandler getQueryHandler() {
         return queryHandler;
     }
@@ -180,16 +188,19 @@ public class FrontendConnection extends AbstractFrontendConnection {
             try {
                 sql = mm.readString(charset);
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+                writeErrMessage(ErrorCode.ER_UNKNOWN_CHARACTER_SET, "Unknown charset '" + charset + "'");
                 return;
             }
             if (sql == null || sql.length() == 0) {
                 logger.info("empty SQL");
+                writeErrMessage(ErrorCode.ER_NOT_ALLOWED_COMMAND, "Empty SQL!");
                 return;
             }
+            // 执行SQL
             queryHandler.query(sql);
         } else {
             logger.error("query error");
+            writeErrMessage(ErrorCode.ER_UNKNOWN_COM_ERROR, "Query Unsupported!");
         }
     }
 
@@ -226,5 +237,9 @@ public class FrontendConnection extends AbstractFrontendConnection {
 
     public ResponseHandler getResponseHandler() {
         return session.getResponseHandler();
+    }
+
+    public boolean isAutoCommit() {
+        return autoCommit;
     }
 }

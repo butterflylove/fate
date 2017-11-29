@@ -74,7 +74,14 @@ public class BackendCommandHandler extends ChannelHandlerAdapter {
     }
 
     private boolean handleResponse(BinaryPacket bin, CmdType cmdType) {
-        return handleResult(bin, cmdType);
+        if (selecting) {
+            logger.info("selecting execute");
+            return handleResult(bin, cmdType);
+        } else {
+            logger.info("insert delete update execute");
+            return handleNormalResult(bin, cmdType);
+        }
+
     }
 
     private boolean handleResult(BinaryPacket bin, CmdType cmdType) {

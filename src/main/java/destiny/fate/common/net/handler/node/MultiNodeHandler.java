@@ -4,10 +4,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Created by zhangtianlong01 on 2017/11/28.
+ * @author zhangtianlong
  */
 public abstract class MultiNodeHandler implements ResponseHandler {
-
     /**
      * 执行节点数量
      */
@@ -27,4 +26,10 @@ public abstract class MultiNodeHandler implements ResponseHandler {
      */
     protected AtomicBoolean isFailed = new AtomicBoolean(false);
 
+    protected void reset(int initCount) {
+        this.nodeCount = initCount;
+        this.isFailed.set(false);
+        errorMessage = null;
+        packetId = 0;
+    }
 }
