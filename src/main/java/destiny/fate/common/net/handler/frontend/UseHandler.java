@@ -1,6 +1,8 @@
 package destiny.fate.common.net.handler.frontend;
 
 import destiny.fate.common.net.protocol.util.ErrorCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * USE操作的handler
@@ -9,8 +11,11 @@ import destiny.fate.common.net.protocol.util.ErrorCode;
  */
 public class UseHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(UseHandler.class);
+
     public static void handle(String sql, FrontendConnection c, int offset) {
         String schema = sql.substring(offset).trim();
+        logger.info("schema = " + schema);
         int length = schema.length();
         if (length > 0) {
             if (schema.charAt(0) == '`' && schema.charAt(length - 1) == '`') {

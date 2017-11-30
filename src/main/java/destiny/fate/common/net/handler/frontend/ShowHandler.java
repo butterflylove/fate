@@ -24,8 +24,9 @@ public final class ShowHandler {
                 ShowDatabases.response(c);
                 break;
             default:
+                // show tables 会进入到这个分支
+                logger.info("enter default show---------");
                 c.execute(stmt, ServerParser.SHOW);
-                break;
         }
     }
 }

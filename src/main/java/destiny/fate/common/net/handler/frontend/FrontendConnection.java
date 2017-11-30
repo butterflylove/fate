@@ -26,7 +26,7 @@ public class FrontendConnection extends AbstractFrontendConnection {
     protected String user;
     protected String host;
     protected int port;
-    protected String schema="test";
+    protected String schema;
     protected String charset;
     protected int charsetIndex;
     protected FrontendQueryHandler queryHandler;
@@ -50,26 +50,24 @@ public class FrontendConnection extends AbstractFrontendConnection {
         MySQLMessage mm = new MySQLMessage(bin.data);
         mm.position(1);
         String db = mm.readString();
-        logger.debug("init db ==== " + db);
+        logger.info("init db ==== " + db);
 
         // 检查schema是否已经设置
         if (schema != null) {
             if (schema.equals(db)) {
-                logger.debug("init success");
+                logger.info("init success");
                 writeOk();
             } else {
-                // TODO
+                writeErrMessage(ErrorCode.ER_DBACCESS_DENIED_ERROR, "Not allowed to change the database!");
             }
             return;
         }
         if (db == null) {
-            // TODO
-            return;
+            writeErrMessage(ErrorCode.ER_BAD_DB_ERROR, "Unknown database");
         } else {
-            logger.debug("init success");
+            logger.info("init success");
             this.schema = db;
             writeOk();
-            return;
         }
     }
 

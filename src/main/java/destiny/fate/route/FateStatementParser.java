@@ -5,6 +5,7 @@ import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
 import destiny.fate.common.net.route.RouteResultset;
 import destiny.fate.common.net.route.RouteResultsetNode;
 import destiny.fate.parser.ServerParser;
+import destiny.fate.route.visitor.FateTbSuffixVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,8 @@ public class FateStatementParser {
                 logger.info("parse into insert");
                 return singleParse(sql, ServerParser.INSERT);
         }
-        return singleParse(sql, ServerParser.SELECT);
+        logger.info("default parse");
+        return singleParse(sql, sqlType);
     }
 
     public static RouteResultset singleParse(String sql, int sqlType) {
@@ -54,8 +56,22 @@ public class FateStatementParser {
             MySqlStatementParser parser = new MySqlStatementParser(sql);
             SQLSelectStatement selectStatement = parser.parseSelect();
             StringBuilder builder = new StringBuilder();
-
+            FateTbSuffixVisitor suffixVisitor = new FateTbSuffixVisitor(builder, "_" + i);
+            selectStatement.accept(suffixVisitor);
+            RouteResultsetNode node = new RouteResultsetNode(String.valueOf(i), builder.toString(), ServerParser.SELECT);
+            nodes[i - 1] = node;
         }
-        return null;
+        routeResultset.setNodes(nodes);
+        return routeResultset;
+    }
+
+    public static void main(String[] args) {
+        String sql = "SELECT * FROM dist";
+        MySqlStatementParser parser = new MySqlStatementParser(sql);
+        SQLSelectStatement selectStmt = parser.parseSelect();
+        StringBuilder builder = new StringBuilder();
+        FateTbSuffixVisitor visitor = new FateTbSuffixVisitor(builder, "_" + 1);
+        selectStmt.accept(visitor);
+        System.out.println(builder.toString());
     }
 }

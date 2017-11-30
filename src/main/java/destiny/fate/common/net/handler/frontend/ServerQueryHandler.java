@@ -22,6 +22,7 @@ public class ServerQueryHandler implements FrontendQueryHandler {
         logger.info("SQL = {}", sql);
 
         int rs = ServerParser.parse(sql);
+        // 根据最后一个字节的值来判断SQL语句的类型
         switch (rs & 0xff) {
             case ServerParser.SELECT:
                 logger.info("execute select");
@@ -34,6 +35,7 @@ public class ServerQueryHandler implements FrontendQueryHandler {
             case ServerParser.SHOW:
                 // TODO 支持逻辑上的数据源
                 logger.info("execute show");
+                // 无符号左移动8位获取原来SQL字符移动的位数
                 ShowHandler.handle(sql, source, rs >>> 8);
                 break;
             default:
