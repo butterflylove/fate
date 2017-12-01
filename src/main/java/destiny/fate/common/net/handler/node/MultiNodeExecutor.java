@@ -67,7 +67,14 @@ public class MultiNodeExecutor extends MultiNodeHandler {
 
     @Override
     public void fieldListResponse(List<BinaryPacket> fieldList) {
-
+        lock.lock();
+        try {
+            if (!isFailed.get()) {
+                //
+            }
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
