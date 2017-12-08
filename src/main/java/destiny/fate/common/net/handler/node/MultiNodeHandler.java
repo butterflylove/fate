@@ -32,4 +32,18 @@ public abstract class MultiNodeHandler implements ResponseHandler {
         errorMessage = null;
         packetId = 0;
     }
+
+    protected boolean decrementNodeCount() {
+        boolean zeroReached = false;
+        --nodeCount;
+        if (nodeCount == 0) {
+            zeroReached = true;
+        }
+        return zeroReached;
+    }
+
+    protected void setFailMsg(String errorMessage) {
+        isFailed.set(true);
+        this.errorMessage = errorMessage;
+    }
 }

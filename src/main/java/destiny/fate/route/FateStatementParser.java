@@ -23,19 +23,19 @@ public class FateStatementParser {
         switch (sqlType) {
             case ServerParser.SELECT:
                 logger.info("parse into select.");
-                return singleParse(sql, ServerParser.SELECT);
+                return multiParse(sql, ServerParser.SELECT);
             case ServerParser.DELETE:
                 logger.info("parse into delete");
-                return singleParse(sql, ServerParser.DELETE);
+                return multiParse(sql, ServerParser.DELETE);
             case ServerParser.UPDATE:
                 logger.info("parse into update");
-                return singleParse(sql, ServerParser.UPDATE);
+                return multiParse(sql, ServerParser.UPDATE);
             case ServerParser.INSERT:
                 logger.info("parse into insert");
-                return singleParse(sql, ServerParser.INSERT);
+                return multiParse(sql, ServerParser.INSERT);
         }
         logger.info("default parse");
-        return singleParse(sql, sqlType);
+        return multiParse(sql, sqlType);
     }
 
     public static RouteResultset singleParse(String sql, int sqlType) {
@@ -52,7 +52,7 @@ public class FateStatementParser {
     public static RouteResultset multiParse(String sql, int sqlType) {
         RouteResultset routeResultset = new RouteResultset();
         RouteResultsetNode[] nodes = new RouteResultsetNode[tbCount];
-        for (int i = 0; i <= tbCount; i++) {
+        for (int i = 1; i <= tbCount; i++) {
             MySqlStatementParser parser = new MySqlStatementParser(sql);
             SQLSelectStatement selectStatement = parser.parseSelect();
             StringBuilder builder = new StringBuilder();

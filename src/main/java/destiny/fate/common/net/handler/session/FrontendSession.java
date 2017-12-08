@@ -2,6 +2,7 @@ package destiny.fate.common.net.handler.session;
 
 import destiny.fate.common.net.handler.backend.BackendConnection;
 import destiny.fate.common.net.handler.frontend.FrontendConnection;
+import destiny.fate.common.net.handler.node.MultiNodeExecutor;
 import destiny.fate.common.net.handler.node.ResponseHandler;
 import destiny.fate.common.net.handler.node.SingleNodeExecutor;
 import destiny.fate.common.net.protocol.util.ErrorCode;
@@ -37,6 +38,7 @@ public class FrontendSession implements Session {
     private final ConcurrentHashMap<RouteResultsetNode, BackendConnection> target;
 
     private final SingleNodeExecutor singleNodeExecutor;
+    private final MultiNodeExecutor multiNodeExecutor;
     /**
      * 处理当前SQL的handler,可以是single也可能是multi
      */
@@ -46,6 +48,7 @@ public class FrontendSession implements Session {
         this.source = source;
         target = new ConcurrentHashMap<RouteResultsetNode, BackendConnection>();
         singleNodeExecutor = new SingleNodeExecutor(this);
+        multiNodeExecutor = new MultiNodeExecutor(this);
     }
 
     public void writeErrMsg(int errNo, String msg) {
@@ -58,7 +61,7 @@ public class FrontendSession implements Session {
     }
 
     public int getTargetCount() {
-        return 0;
+        return target.size();
     }
 
     public void execute(String sql, int type) {
@@ -75,7 +78,8 @@ public class FrontendSession implements Session {
             responseHandler = singleNodeExecutor;
             singleNodeExecutor.execute(rrs);
         } else {
-
+            responseHandler = multiNodeExecutor;
+            multiNodeExecutor.execute(rrs);
         }
     }
 
