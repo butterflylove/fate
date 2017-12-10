@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fate>
+    <user name="root">
+        <property name="password">123456</property>
+        <property name="schema">test</property>
+    </user>
+</fate>
