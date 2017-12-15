@@ -7,6 +7,8 @@ public class UserConfig {
 
     private String name;
     private String password;
+    private String schema;
+
 
     public String getName() {
         return name;
@@ -24,11 +26,20 @@ public class UserConfig {
         this.password = password;
     }
 
+    public String getSchema() {
+        return schema;
+    }
+
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
     @Override
     public String toString() {
         return "UserConfig{" +
                 "name='" + name + '\'' +
                 ", password='" + password + '\'' +
+                ", schema='" + schema + '\'' +
                 '}';
     }
 }

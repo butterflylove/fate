@@ -1,6 +1,7 @@
 package destiny.fate.common.net.handler.frontend;
 
 import destiny.fate.common.config.ServerConfig;
+import destiny.fate.common.config.loader.XMLServerLoader;
 import destiny.fate.common.net.protocol.AuthPacket;
 import destiny.fate.common.net.protocol.BinaryPacket;
 import destiny.fate.common.net.protocol.Capabilities;
@@ -99,7 +100,7 @@ public class FrontendAuthenticator extends ChannelHandlerAdapter {
 
     protected boolean checkPassword(byte[] password, String user) {
         // TODO config
-        String pass = ServerConfig.FRONTEDN_PASS_WORD;
+        String pass = XMLServerLoader.getUserConfig().getPassword();
         if (pass == null || pass.length() == 0) {
             if (password == null || password.length == 0) {
                 return true;

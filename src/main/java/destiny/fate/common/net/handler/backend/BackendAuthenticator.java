@@ -1,6 +1,7 @@
 package destiny.fate.common.net.handler.backend;
 
 import destiny.fate.common.config.ServerConfig;
+import destiny.fate.common.config.loader.XMLServerLoader;
 import destiny.fate.common.net.exception.ErrorPacketException;
 import destiny.fate.common.net.exception.UnknowCharsetException;
 import destiny.fate.common.net.exception.UnknownPacketException;
@@ -109,7 +110,6 @@ public class BackendAuthenticator extends ChannelHandlerAdapter {
         ap.clientFlags = CLIENT_FLAGS;
         ap.maxPacketSize = MAX_PACKET_SIZE;
         ap.charsetIndex = source.charsetIndex;
-        // TODO config
         ap.user = ServerConfig.USER_NAME;
         String passwd = ServerConfig.PASS_WORD;
         if (passwd != null && passwd.length() > 0) {
@@ -121,7 +121,6 @@ public class BackendAuthenticator extends ChannelHandlerAdapter {
             System.arraycopy(restOfScramble, 0, authSeed, seed.length, restOfScramble.length);
             ap.password = SecurityUtil.scramble411(password, authSeed);
         }
-        // TODO config
         ap.database = ServerConfig.DATABASE;
         ap.write(ctx);
     }
